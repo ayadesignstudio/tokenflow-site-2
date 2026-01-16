@@ -12,6 +12,28 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon.png">
 
   <style>
+
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation: none !important;
+      transition: none !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Fix scroll anchor offset because header is fixed */
+
+  .screenshot-container,
+.arc-ring::before,
+.particle {
+  will-change: transform, opacity;
+}
+
+section,
+form[id] {
+  scroll-margin-top: 120px;
+}
+
     *,
     *::before,
     *::after {
@@ -450,15 +472,35 @@
     }
 
     .hero-title {
-      font-size: clamp(32px, 5.5vw, 64px);
-      font-weight: 700;
-      line-height: 1.1;
-      letter-spacing: -0.03em;
-      margin-bottom: 24px;
-      white-space: nowrap;
-      animation: fadeUp 0.8s ease 0.1s forwards;
-      opacity: 0;
-    }
+  font-size: clamp(32px, 5.5vw, 64px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin-bottom: 24px;
+  animation: fadeUp 0.8s ease 0.1s forwards;
+  opacity: 0;
+}
+@media (min-width: 700px) {
+  .hero-title {
+    white-space: nowrap;
+  }
+}
+@media (max-width: 768px) {
+  .nav-links.open {
+    display: flex;
+    position: absolute;
+    top: 62px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    padding: 14px;
+    background: rgba(10, 15, 30, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    gap: 8px;
+  }
+}
+
 
     .title-gradient {
       background: linear-gradient(90deg, #60A5FA 0%, #A78BFA 25%, #F472B6 50%, #A78BFA 75%, #60A5FA 100%);
@@ -2863,6 +2905,9 @@
         justify-content: center;
       }
     }
+
+
+
   </style>
 </head>
 
@@ -2939,8 +2984,22 @@
       </p>
       <div class="hero-actions">
         <div class="subscribe-form-container">
-          <form class="subscribe-form subscribe-form-js" id="subscribe-form">
-            <input type="email" class="email-input-js" placeholder="Enter your email" required>
+          <form
+  class="subscribe-form subscribe-form-js"
+  id="subscribe-form"
+  action="https://formspree.io/f/xqeeezlr"
+  method="POST"
+>
+            <input
+    type="email"
+    name="email"
+    autocomplete="email"
+    aria-label="Email address"
+    class="email-input-js"
+    placeholder="Enter your email"
+    required
+  >
+
             <button type="submit" class="btn btn-primary subscribe-btn-js">Subscribe</button>
           </form>
           <div class="subscribe-message subscribe-message-js"></div>
@@ -3459,10 +3518,24 @@
         from Figma Community.</p>
       <div class="cta-buttons">
         <div class="subscribe-form-container">
-          <form class="subscribe-form subscribe-form-js" id="final-subscribe-form">
-            <input type="email" class="email-input-js" placeholder="Enter your email" required>
-            <button type="submit" class="btn btn-primary subscribe-btn-js">Subscribe</button>
-          </form>
+          <form
+      class="subscribe-form subscribe-form-js"
+      id="final-subscribe-form"
+      action="https://formspree.io/f/xqeeezlr"
+      method="POST"
+    >
+      <input
+        type="email"
+        name="email"
+        autocomplete="email"
+        aria-label="Email address"
+        class="email-input-js"
+        placeholder="Enter your email"
+        required
+      >
+      <button type="submit" class="btn btn-primary subscribe-btn-js">Subscribe</button>
+    </form>
+
           <div class="subscribe-message subscribe-message-js"></div>
         </div>
       </div>
@@ -3524,7 +3597,9 @@
       anchor.addEventListener('click', function (e) {
         e.preventDefault();
         const href = this.getAttribute('href');
-        const target = document.querySelector(href);
+  if (!href || href === '#') return; // ✅ ignore empty anchors like "#"
+  const target = document.querySelector(href);
+
         if (target) {
           target.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
@@ -3540,49 +3615,66 @@
     });
 
     document.querySelectorAll('.subscribe-form-js').forEach(form => {
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const emailInput = form.querySelector('.email-input-js');
-        const subscribeBtn = form.querySelector('.subscribe-btn-js');
-        const messageDiv = form.nextElementSibling; // The message div is after the form
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-        const email = emailInput.value;
+      const emailInput = form.querySelector('.email-input-js');
+      const subscribeBtn = form.querySelector('.subscribe-btn-js');
+      const messageDiv = form.nextElementSibling;
 
-        // Update UI state
-        subscribeBtn.disabled = true;
-        const originalBtnText = subscribeBtn.textContent;
-        subscribeBtn.textContent = 'Subscribing...';
-        messageDiv.textContent = '';
-        messageDiv.className = 'subscribe-message subscribe-message-js';
+      const email = emailInput.value;
 
-        try {
-          const response = await fetch('/api/subscribe', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email }),
-          });
+      subscribeBtn.disabled = true;
+      const originalBtnText = subscribeBtn.textContent;
+      subscribeBtn.textContent = 'Subscribing...';
 
-          const data = await response.json();
+      messageDiv.textContent = '';
+      messageDiv.className = 'subscribe-message subscribe-message-js';
 
-          if (response.ok) {
-            messageDiv.textContent = data.message;
-            messageDiv.classList.add('success');
-            emailInput.value = '';
-          } else {
-            messageDiv.textContent = data.error || 'Something went wrong';
-            messageDiv.classList.add('error');
-          }
-        } catch (error) {
-          messageDiv.textContent = 'Server error. Please try again later.';
+      try {
+        const response = await fetch("https://formspree.io/f/xqeeezlr", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify({ email })
+        });
+
+        if (response.ok) {
+          messageDiv.textContent = "You're on the list! 🎉";
+          messageDiv.classList.add('success');
+          emailInput.value = '';
+        } else {
+          messageDiv.textContent = "Something went wrong. Try again.";
           messageDiv.classList.add('error');
-        } finally {
-          subscribeBtn.disabled = false;
-          subscribeBtn.textContent = originalBtnText;
         }
-      });
+      } catch (error) {
+        messageDiv.textContent = "Network error. Please try again.";
+        messageDiv.classList.add('error');
+      } finally {
+        subscribeBtn.disabled = false;
+        subscribeBtn.textContent = originalBtnText;
+      }
     });
+  });
+
+
+    // Mobile menu toggle
+const menuBtn = document.querySelector('[data-testid="button-mobile-menu"]');
+const navLinks = document.querySelector('.nav-links');
+
+menuBtn?.addEventListener('click', () => {
+  navLinks.classList.toggle('open');
+});
+document.querySelectorAll('.nav-links .nav-link').forEach(link => {
+  link.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+  });
+});
+
+
+
   </script>
 
 </body>
