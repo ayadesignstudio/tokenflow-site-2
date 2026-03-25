@@ -1,0 +1,5 @@
+node_modules/
+mailing_list.db
+.DS_Store
+*.mov
+server.js.backup
