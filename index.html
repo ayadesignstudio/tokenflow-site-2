@@ -11,28 +11,47 @@
   <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon.png">
 
+  <!-- SEO Meta Tags -->
+  <link rel="canonical" href="https://tokenflow.xyz">
+  <meta name="theme-color" content="#070A13">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://tokenflow.xyz">
+  <meta property="og:title" content="TokenFlow - From Primitives to Systems | Figma Plugin">
+  <meta property="og:description"
+    content="The complete design token workflow for Figma. Build primitives, create semantic aliases, and generate variables. 100% offline and free forever.">
+  <meta property="og:image" content="https://tokenflow.xyz/assets/plugin.png">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://tokenflow.xyz">
+  <meta property="twitter:title" content="TokenFlow - From Primitives to Systems | Figma Plugin">
+  <meta property="twitter:description"
+    content="The complete design token workflow for Figma. Build primitives, create semantic aliases, and generate variables. 100% offline and free forever.">
+  <meta property="twitter:image" content="https://tokenflow.xyz/assets/plugin.png">
+
   <style>
-
-  @media (prefers-reduced-motion: reduce) {
-    * {
-      animation: none !important;
-      transition: none !important;
-      scroll-behavior: auto !important;
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
     }
-  }
 
-  /* Fix scroll anchor offset because header is fixed */
+    /* Fix scroll anchor offset because header is fixed */
 
-  .screenshot-container,
-.arc-ring::before,
-.particle {
-  will-change: transform, opacity;
-}
+    .screenshot-container,
+    .arc-ring::before,
+    .particle {
+      will-change: transform, opacity;
+    }
 
-section,
-form[id] {
-  scroll-margin-top: 120px;
-}
+    section,
+    form[id] {
+      scroll-margin-top: 120px;
+    }
 
     *,
     *::before,
@@ -182,6 +201,7 @@ form[id] {
       padding: 1px;
       background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02), rgba(59, 130, 246, 0.2));
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
       mask-composite: exclude;
       pointer-events: none;
@@ -253,6 +273,11 @@ form[id] {
       border-radius: 100px;
       transition: all 0.25s;
       letter-spacing: -0.01em;
+    }
+
+    .nav-link.active {
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
     }
 
     .nav-link:hover {
@@ -472,34 +497,36 @@ form[id] {
     }
 
     .hero-title {
-  font-size: clamp(32px, 5.5vw, 64px);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.03em;
-  margin-bottom: 24px;
-  animation: fadeUp 0.8s ease 0.1s forwards;
-  opacity: 0;
-}
-@media (min-width: 700px) {
-  .hero-title {
-    white-space: nowrap;
-  }
-}
-@media (max-width: 768px) {
-  .nav-links.open {
-    display: flex;
-    position: absolute;
-    top: 62px;
-    left: 0;
-    right: 0;
-    flex-direction: column;
-    padding: 14px;
-    background: rgba(10, 15, 30, 0.96);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 18px;
-    gap: 8px;
-  }
-}
+      font-size: clamp(32px, 5.5vw, 64px);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+      animation: fadeUp 0.8s ease 0.1s forwards;
+      opacity: 0;
+    }
+
+    @media (min-width: 700px) {
+      .hero-title {
+        white-space: nowrap;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links.open {
+        display: flex;
+        position: absolute;
+        top: 62px;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        padding: 14px;
+        background: rgba(10, 15, 30, 0.96);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        gap: 8px;
+      }
+    }
 
 
     .title-gradient {
@@ -2906,12 +2933,280 @@ form[id] {
       }
     }
 
+    /* ========== EMAIL GATE MODAL ========== */
+    .email-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
 
+    .email-modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
 
+    .email-modal {
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(10, 15, 30, 0.98));
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 48px 40px;
+      max-width: 460px;
+      width: 100%;
+      position: relative;
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+        0 25px 50px -12px rgba(0, 0, 0, 0.6),
+        0 0 80px rgba(59, 130, 246, 0.15);
+      transform: translateY(20px) scale(0.95);
+      transition: transform 0.3s ease;
+    }
+
+    .email-modal-overlay.active .email-modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .email-modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+    }
+
+    .email-modal-close:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text);
+    }
+
+    .email-modal-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--accent), #818CF8);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4);
+    }
+
+    .email-modal-icon svg {
+      width: 32px;
+      height: 32px;
+      stroke: white;
+      fill: none;
+    }
+
+    .email-modal-title {
+      font-size: 24px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .email-modal-desc {
+      font-size: 15px;
+      color: var(--text-dim);
+      text-align: center;
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    .email-modal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .email-modal-input {
+      width: 100%;
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      font-size: 15px;
+      color: var(--text);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .email-modal-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .email-modal-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .email-modal-submit {
+      width: 100%;
+      padding: 16px 24px;
+      background: linear-gradient(135deg, var(--accent), #6366F1);
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+    }
+
+    .email-modal-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(59, 130, 246, 0.5);
+    }
+
+    .email-modal-submit:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .email-modal-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    .email-modal-message {
+      text-align: center;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-top: 8px;
+      display: none;
+    }
+
+    .email-modal-message.success {
+      display: block;
+      background: rgba(34, 197, 94, 0.1);
+      color: #22C55E;
+      border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+
+    .email-modal-message.error {
+      display: block;
+      background: rgba(239, 68, 68, 0.1);
+      color: #EF4444;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    /* Success state */
+    .email-modal-success {
+      display: none;
+      text-align: center;
+    }
+
+    .email-modal-success.active {
+      display: block;
+    }
+
+    .email-modal-success-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #22C55E, #16A34A);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      box-shadow: 0 8px 32px rgba(34, 197, 94, 0.4);
+    }
+
+    .email-modal-success-icon svg {
+      width: 40px;
+      height: 40px;
+      stroke: white;
+      fill: none;
+    }
+
+    .email-modal-form-container {
+      display: block;
+    }
+
+    .email-modal-form-container.hidden {
+      display: none;
+    }
   </style>
 </head>
 
 <body>
+
+  <!-- Email Gate Modal -->
+  <div class="email-modal-overlay" id="emailModal">
+    <div class="email-modal">
+      <button class="email-modal-close" id="emailModalClose" aria-label="Close modal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+
+      <!-- Form State -->
+      <div class="email-modal-form-container" id="emailModalFormContainer">
+        <div class="email-modal-icon">
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+        </div>
+        <h2 class="email-modal-title">Get TokenFlow Free</h2>
+        <p class="email-modal-desc">Enter your email to unlock the plugin instantly. We'll keep you updated on new
+          features.</p>
+
+        <form class="email-modal-form" id="emailModalForm">
+          <input type="email" class="email-modal-input" id="emailModalInput" placeholder="you@example.com" required
+            autocomplete="email">
+          <button type="submit" class="email-modal-submit" id="emailModalSubmit">
+            Send Me the Link →
+          </button>
+        </form>
+
+        <div class="email-modal-message" id="emailModalMessage"></div>
+        <p class="email-modal-note">🔒 We respect your privacy. Unsubscribe anytime.</p>
+      </div>
+
+      <!-- Success State -->
+      <div class="email-modal-success" id="emailModalSuccess">
+        <div class="email-modal-success-icon">
+          <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <h2 class="email-modal-title">You're In! 🎉</h2>
+        <p class="email-modal-desc">Thanks for joining TokenFlow! Click below to get the plugin.</p>
+        <a href="https://www.figma.com/community/plugin/1582103886154955556/token-flow" class="email-modal-submit"
+          style="display: inline-block; text-decoration: none; text-align: center; margin-top: 16px;">
+          Get TokenFlow Plugin →
+        </a>
+        <p class="email-modal-note" style="margin-top: 24px;">We'll send you updates about new features.</p>
+      </div>
+    </div>
+  </div>
 
   <!-- Background Effects -->
   <div class="bg-effects">
@@ -2938,9 +3233,9 @@ form[id] {
         <a href="#roadmap" class="nav-link" data-testid="nav-roadmap">Roadmap</a>
         <a href="#faq" class="nav-link" data-testid="nav-faq">FAQ</a>
       </div>
-      <a href="#final-subscribe-form" class="nav-cta">
-        Join Waiting List
-      </a>
+      <button class="nav-cta email-gate-trigger" data-testid="nav-cta-get-free">
+        Get Started
+      </button>
 
 
 
@@ -2983,28 +3278,9 @@ form[id] {
         </span>
       </p>
       <div class="hero-actions">
-        <div class="subscribe-form-container">
-          <form
-  class="subscribe-form subscribe-form-js"
-  id="subscribe-form"
-  action="https://formspree.io/f/xqeeezlr"
-  method="POST"
->
-            <input
-    type="email"
-    name="email"
-    autocomplete="email"
-    aria-label="Email address"
-    class="email-input-js"
-    placeholder="Enter your email"
-    required
-  >
-
-            <button type="submit" class="btn btn-primary subscribe-btn-js">Subscribe</button>
-          </form>
-          <div class="subscribe-message subscribe-message-js"></div>
-        </div>
-        <a href="#how-it-works" class="btn btn-secondary" data-testid="link-learn-more">See how it works</a>
+        <button class="btn btn-primary email-gate-trigger" data-testid="hero-cta-get-started">
+          Get Started →
+        </button>
       </div>
     </div>
 
@@ -3022,7 +3298,7 @@ form[id] {
       <div class="screenshot-container">
         <div class="screenshot-glow"></div>
         <div class="screenshot-inner">
-          <img src="assets/plugin.png" alt="TokenFlow Plugin Interface">
+          <img src="assets/plugin.png" alt="TokenFlow Plugin Interface" loading="lazy">
           <div class="screenshot-fade"></div>
         </div>
         <div class="screenshot-reflection"></div>
@@ -3079,6 +3355,8 @@ form[id] {
   </section>
 
   <!-- Features -->
+
+
   <section id="features" class="section">
     <div class="section-inner">
       <div class="section-header">
@@ -3517,27 +3795,9 @@ form[id] {
       <p class="cta-desc">Join thousands of designers building scalable design systems with TokenFlow. Install directly
         from Figma Community.</p>
       <div class="cta-buttons">
-        <div class="subscribe-form-container">
-          <form
-      class="subscribe-form subscribe-form-js"
-      id="final-subscribe-form"
-      action="https://formspree.io/f/xqeeezlr"
-      method="POST"
-    >
-      <input
-        type="email"
-        name="email"
-        autocomplete="email"
-        aria-label="Email address"
-        class="email-input-js"
-        placeholder="Enter your email"
-        required
-      >
-      <button type="submit" class="btn btn-primary subscribe-btn-js">Subscribe</button>
-    </form>
-
-          <div class="subscribe-message subscribe-message-js"></div>
-        </div>
+        <button class="btn btn-primary email-gate-trigger" data-testid="footer-cta-get-plugin">
+          Get Started →
+        </button>
       </div>
       <p class="cta-note">Works with Figma desktop and browser. No plugins to manage.</p>
     </div>
@@ -3558,7 +3818,8 @@ form[id] {
 
       <div class="footer-socials">
         <!-- Instagram -->
-        <a href="https://instagram.com" target="_blank" class="footer-link social-icon" aria-label="Instagram">
+        <a href="https://www.instagram.com/ayaa_abdullah1/" target="_blank" class="footer-link social-icon"
+          aria-label="Instagram">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
             stroke-linejoin="round">
             <rect x="2" y="2" width="20" height="20" rx="6" ry="6"></rect>
@@ -3568,7 +3829,8 @@ form[id] {
         </a>
 
         <!-- LinkedIn -->
-        <a href="https://linkedin.com" target="_blank" class="footer-link social-icon" aria-label="LinkedIn">
+        <a href="https://www.linkedin.com/in/aya-abdullah27/" target="_blank" class="footer-link social-icon"
+          aria-label="LinkedIn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
             stroke-linejoin="round">
             <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4V9h4v2"></path>
@@ -3597,82 +3859,129 @@ form[id] {
       anchor.addEventListener('click', function (e) {
         e.preventDefault();
         const href = this.getAttribute('href');
-  if (!href || href === '#') return; // ✅ ignore empty anchors like "#"
-  const target = document.querySelector(href);
+        if (!href || href === '#') return;
+        const target = document.querySelector(href);
 
         if (target) {
           target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-          // If it's a subscription form, focus the input
-          if (href === '#subscribe-form' || href === '#final-subscribe-form') {
-            const input = target.querySelector('.email-input-js');
-            if (input) {
-              setTimeout(() => input.focus(), 800); // Wait for scroll to finish
-            }
-          }
         }
       });
     });
 
-    document.querySelectorAll('.subscribe-form-js').forEach(form => {
-    form.addEventListener('submit', async (e) => {
+    // ========== EMAIL GATE MODAL LOGIC ==========
+    const emailModal = document.getElementById('emailModal');
+    const emailModalClose = document.getElementById('emailModalClose');
+    const emailModalForm = document.getElementById('emailModalForm');
+    const emailModalInput = document.getElementById('emailModalInput');
+    const emailModalSubmit = document.getElementById('emailModalSubmit');
+    const emailModalMessage = document.getElementById('emailModalMessage');
+    const emailModalFormContainer = document.getElementById('emailModalFormContainer');
+    const emailModalSuccess = document.getElementById('emailModalSuccess');
+
+    // Open modal
+    function openEmailModal() {
+      emailModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => emailModalInput.focus(), 300);
+    }
+
+    // Close modal
+    function closeEmailModal() {
+      emailModal.classList.remove('active');
+      document.body.style.overflow = '';
+      // Reset to form state after animation
+      setTimeout(() => {
+        emailModalFormContainer.classList.remove('hidden');
+        emailModalSuccess.classList.remove('active');
+        emailModalMessage.className = 'email-modal-message';
+        emailModalMessage.textContent = '';
+        emailModalInput.value = '';
+        emailModalSubmit.disabled = false;
+        emailModalSubmit.textContent = 'Send Me the Link →';
+      }, 300);
+    }
+
+    // All CTA triggers
+    document.querySelectorAll('.email-gate-trigger').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openEmailModal();
+      });
+    });
+
+    // Close button
+    emailModalClose.addEventListener('click', closeEmailModal);
+
+    // Click outside to close
+    emailModal.addEventListener('click', (e) => {
+      if (e.target === emailModal) closeEmailModal();
+    });
+
+    // Escape key to close
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && emailModal.classList.contains('active')) {
+        closeEmailModal();
+      }
+    });
+
+    // Form submission
+    emailModalForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const emailInput = form.querySelector('.email-input-js');
-      const subscribeBtn = form.querySelector('.subscribe-btn-js');
-      const messageDiv = form.nextElementSibling;
+      const email = emailModalInput.value.trim();
+      if (!email) return;
 
-      subscribeBtn.disabled = true;
-      const originalBtnText = subscribeBtn.textContent;
-      subscribeBtn.textContent = 'Subscribing...';
-
-      messageDiv.textContent = '';
-      messageDiv.className = 'subscribe-message subscribe-message-js';
+      emailModalSubmit.disabled = true;
+      emailModalSubmit.textContent = 'Sending...';
+      emailModalMessage.className = 'email-modal-message';
+      emailModalMessage.textContent = '';
 
       try {
-        const response = await fetch(form.action, {
-          method: "POST",
-          body: new FormData(form),
-          headers: { "Accept": "application/json" }
+        const response = await fetch('https://formspree.io/f/xqeeezlr', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ email })
         });
 
         if (response.ok) {
-          messageDiv.textContent = "You're on the list! 🎉";
-          messageDiv.classList.add('success');
-          emailInput.value = '';
+          // Show success state
+          emailModalFormContainer.classList.add('hidden');
+          emailModalSuccess.classList.add('active');
         } else {
-          messageDiv.textContent = "Server error. Please try again later.";
-          messageDiv.classList.add('error');
+          const data = await response.json();
+          emailModalMessage.textContent = data.error || 'Something went wrong. Please try again.';
+          emailModalMessage.classList.add('error');
+          emailModalSubmit.disabled = false;
+          emailModalSubmit.textContent = 'Send Me the Link →';
         }
-
       } catch (error) {
-        messageDiv.textContent = "Network error. Please try again.";
-        messageDiv.classList.add('error');
-      } finally {
-        subscribeBtn.disabled = false;
-        subscribeBtn.textContent = originalBtnText;
+        emailModalMessage.textContent = 'Network error. Please check your connection.';
+        emailModalMessage.classList.add('error');
+        emailModalSubmit.disabled = false;
+        emailModalSubmit.textContent = 'Send Me the Link →';
       }
     });
-  });
-
 
     // Mobile menu toggle
-const menuBtn = document.querySelector('[data-testid="button-mobile-menu"]');
-const navLinks = document.querySelector('.nav-links');
+    const menuBtn = document.querySelector('[data-testid="button-mobile-menu"]');
+    const navLinks = document.querySelector('.nav-links');
 
-menuBtn?.addEventListener('click', () => {
-  navLinks.classList.toggle('open');
-});
-document.querySelectorAll('.nav-links .nav-link').forEach(link => {
-  link.addEventListener('click', () => {
-    navLinks.classList.remove('open');
-  });
-});
+    if (menuBtn) {
+      menuBtn.addEventListener('click', () => {
+        navLinks.classList.toggle('open');
+      });
+    }
 
-
+    document.querySelectorAll('.nav-links .nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        if (navLinks) navLinks.classList.remove('open');
+      });
+    });
 
   </script>
-
 </body>
 
 </html>
