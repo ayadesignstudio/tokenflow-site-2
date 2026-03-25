@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TokenFlow — Admin Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0f0f14;
+            --card: #1a1a24;
+            --card-hover: #22222f;
+            --border: #2a2a3a;
+            --text: #e4e4ed;
+            --text-dim: #8888a0;
+            --accent: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.15);
+            --success: #22c55e;
+            --warn: #f59e0b;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 32px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .header h1 span {
+            color: var(--accent);
+        }
+
+        .refresh-btn {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .refresh-btn:hover {
+            background: var(--card-hover);
+            color: var(--text);
+        }
+
+        /* Stats Cards */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .stat-value.accent {
+            color: var(--accent);
+        }
+
+        .stat-value.green {
+            color: var(--success);
+        }
+
+        .stat-value.yellow {
+            color: var(--warn);
+        }
+
+        /* Search */
+        .search-bar {
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px 16px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-bar input:focus {
+            border-color: var(--accent);
+        }
+
+        .search-bar input::placeholder {
+            color: var(--text-dim);
+        }
+
+        /* Users Table */
+        .table-wrap {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 14px 20px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-dim);
+            border-bottom: 1px solid var(--border);
+            background: rgba(99, 102, 241, 0.04);
+        }
+
+        td {
+            padding: 14px 20px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: var(--card-hover);
+        }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border);
+        }
+
+        .avatar-placeholder {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--accent-glow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent);
+            border: 2px solid var(--border);
+        }
+
+        .user-info .name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-info .email {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-count {
+            background: var(--accent-glow);
+            color: var(--accent);
+        }
+
+        .time-ago {
+            color: var(--text-dim);
+            font-size: 13px;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-dim);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-dim);
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1><span>TokenFlow</span> Admin</h1>
+        <button class="refresh-btn" onclick="loadData()">↻ Refresh</button>
+    </div>
+
+    <div class="stats" id="stats">
+        <div class="stat-card">
+            <div class="stat-label">Total Users</div>
+            <div class="stat-value accent" id="stat-total">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Active Today</div>
+            <div class="stat-value green" id="stat-today">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Active This Week</div>
+            <div class="stat-value yellow" id="stat-week">—</div>
+        </div>
+    </div>
+
+    <div class="search-bar">
+        <input type="text" id="search" placeholder="Search by name or email..." oninput="filterUsers()" />
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>First Login</th>
+                    <th>Last Active</th>
+                    <th>Logins</th>
+                </tr>
+            </thead>
+            <tbody id="users-body">
+                <tr>
+                    <td colspan="4" class="loading">
+                        <div class="spinner"></div>
+                        <div>Loading users...</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        var allUsers = [];
+
+        function timeAgo(dateStr) {
+            if (!dateStr) return '—';
+            var now = new Date();
+            var date = new Date(dateStr + 'Z');
+            var diff = Math.floor((now - date) / 1000);
+            if (diff < 60) return 'just now';
+            if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+            if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+            if (diff < 604800) return Math.floor(diff / 86400) + 'd ago';
+            return date.toLocaleDateString();
+        }
+
+        function getInitial(name) {
+            if (!name) return '?';
+            return name.charAt(0).toUpperCase();
+        }
+
+        function renderUsers(users) {
+            var tbody = document.getElementById('users-body');
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="empty">No users found</td></tr>';
+                return;
+            }
+            var html = '';
+            users.forEach(function (u) {
+                var avatarHtml = u.picture
+                    ? '<img class="avatar" src="' + u.picture + '" alt="" />'
+                    : '<div class="avatar-placeholder">' + getInitial(u.name) + '</div>';
+                html += '<tr>'
+                    + '<td><div class="user-cell">'
+                    + avatarHtml
+                    + '<div class="user-info">'
+                    + '<div class="name">' + (u.name || 'Unknown') + '</div>'
+                    + '<div class="email">' + (u.email || '') + '</div>'
+                    + '</div></div></td>'
+                    + '<td class="time-ago">' + timeAgo(u.first_login) + '</td>'
+                    + '<td class="time-ago">' + timeAgo(u.last_login) + '</td>'
+                    + '<td><span class="badge badge-count">' + u.login_count + '</span></td>'
+                    + '</tr>';
+            });
+            tbody.innerHTML = html;
+        }
+
+        function filterUsers() {
+            var q = document.getElementById('search').value.toLowerCase();
+            if (!q) {
+                renderUsers(allUsers);
+                return;
+            }
+            var filtered = allUsers.filter(function (u) {
+                return (u.name && u.name.toLowerCase().indexOf(q) !== -1)
+                    || (u.email && u.email.toLowerCase().indexOf(q) !== -1);
+            });
+            renderUsers(filtered);
+        }
+
+        function loadData() {
+            fetch('/admin/stats')
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    document.getElementById('stat-total').textContent = data.totalUsers;
+                    document.getElementById('stat-today').textContent = data.todayLogins;
+                    document.getElementById('stat-week').textContent = data.weekLogins;
+                })
+                .catch(function (err) {
+                    console.error('Stats error:', err);
+                });
+
+            fetch('/admin/users')
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    allUsers = data.users;
+                    renderUsers(allUsers);
+                })
+                .catch(function (err) {
+                    console.error('Users error:', err);
+                    document.getElementById('users-body').innerHTML =
+                        '<tr><td colspan="4" class="empty">Error loading users</td></tr>';
+                });
+        }
+
+        loadData();
+        // Auto-refresh every 30 seconds
+        setInterval(loadData, 30000);
+    </script>
+</body>
+
+</html>
